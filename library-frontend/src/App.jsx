@@ -4,13 +4,13 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 
-import { ALL_AUTHORS } from "./graphql/queries";
+import { ALL_AUTHORS, ALL_BOOKS } from "./graphql/queries";
 
 const App = () => {
   const [page, setPage] = useState("authors");
-  const result = useQuery(ALL_AUTHORS);
+  const allAuthors = useQuery(ALL_AUTHORS);
+  const allBooks = useQuery(ALL_BOOKS);
 
-  console.log(result);
   return (
     <div>
       <div>
@@ -19,9 +19,12 @@ const App = () => {
         <button onClick={() => setPage("add")}>add book</button>
       </div>
 
-      <Authors show={page === "authors"} authors={result.data?.allAuthors} />
+      <Authors
+        show={page === "authors"}
+        authors={allAuthors.data?.allAuthors}
+      />
 
-      <Books show={page === "books"} />
+      <Books show={page === "books"} books={allBooks.data?.allBooks} />
 
       <NewBook show={page === "add"} />
     </div>
