@@ -113,6 +113,7 @@ type Query {
     bookCount: Int
     authorCount: Int
     allBooks: [Book]
+    allAuthors: [Author]
 }
 `;
 
@@ -126,6 +127,16 @@ const resolvers = {
     },
     allBooks: () => {
       return books;
+    },
+    allAuthors: () => {
+      let bookCount = null;
+      let result = [];
+      for (a of authors) {
+        bookCount = books.filter((b) => a.name == b.author).length;
+        result.push({ name: a.name, bookCount: bookCount });
+      }
+
+      return result;
     },
   },
 };
