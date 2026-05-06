@@ -117,6 +117,7 @@ type Query {
 }
 type Mutation {
     addBook(title: String, author: String, published: Int, genre: [String]): Book 
+    editAuthor(name: String, setBornTo: Int): Author
     }
 `;
 
@@ -167,6 +168,15 @@ const resolvers = {
       };
       books = books.concat(newBook);
       return { title: newBook.title, author: newBook.author };
+    },
+    editAuthor: (_, args) => {
+      let [editedAuthor] = authors.filter((a) => a.name === args.name);
+      if (!editedAuthor) {
+        return null;
+      }
+      editedAuthor = { ...editedAuthor, born: args.setBornTo };
+      authors = authors.map((a) => (a.name === args.name ? editedAuthor : a));
+      return editedAuthor;
     },
   },
 };
