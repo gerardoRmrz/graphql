@@ -1,3 +1,4 @@
+import SetBornToForm from "./SetBornToForm";
 const Authors = (props) => {
   if (!props.show) {
     return null;
@@ -22,6 +23,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      <SetBornToForm authors={authors.map((a) => a.name)} />
     </div>
   );
 };
