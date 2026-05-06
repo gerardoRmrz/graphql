@@ -99,11 +99,13 @@ let books = [
 
 const typeDefs = `
   type Author {
+  id: String
   name: String
   bookCount: Int
   born: Int
 }  
 type Book {
+    id: String
     title: String
     published: Int
     author: String
@@ -148,9 +150,9 @@ const resolvers = {
       let result = [];
       for (a of authors) {
         bookCount = books.filter((b) => a.name == b.author).length;
-        result.push({ name: a.name, bookCount: bookCount });
+        result.push({ ...a, bookCount: bookCount });
       }
-
+      console.log(result);
       return result;
     },
   },
