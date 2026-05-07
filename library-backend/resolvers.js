@@ -40,14 +40,31 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (_, args) => {
+      if (args.author.length < 4) {
+        errorHandler(
+          `Author's name too short, must be longer than 4 characters`,
+          args,
+        );
+      }
+
+      if (args.title.length < 5) {
+        errorHandler(
+          `Book's title too short, must be longer than 5 characters`,
+          args,
+        );
+      }
+
       const authorExists = await Author.exists({ name: args.author });
       let author = null;
       if (!authorExists) {
-        console.log(!authorExists, args);
         author = new Author({
           name: args.author,
         });
-        author.save();
+        try {
+          await author.save();
+        } catch (error) {
+          errorHandler(`Saving author failed: ${error.message}`, args);
+        }
       } else {
         author = Author.findOne({ name: args.author });
       }
@@ -60,14 +77,9 @@ const resolvers = {
       });
 
       try {
+        await Book.save();
       } catch (error) {
-        throw new GraphQLError(`Saving book failed: ${error.message}`, {
-          extensions: {
-            code: "BAD_USER_INPUT",
-            invalidArgs: { ...args },
-            error,
-          },
-        });
+        errorHandler(`Saving book failed: ${error.message}`, args);
       }
 
       return newBook;
@@ -88,3 +100,12 @@ const resolvers = {
 };
 
 module.exports = resolvers;
+
+const errorHandler = (message, inputs) => {
+  throw new GraphQLError(message, {
+    extensions: {
+      code: "BAD_USER_INPUT",
+      invalidArgs: { ...inputs },
+    },
+  });
+};
