@@ -28,28 +28,46 @@ const resolvers = {
         const result = books.filter((b) => b.genres.includes(args.genre));
         return result;
       }
-      return Book.find({}).populate("author");
+      return await Book.find({}).populate("author");
     },
     allAuthors: async () => {
       const result = await Author.find({});
-      console.log(result);
       return result;
     },
   },
   Mutation: {
-    addBook: (_, args) => {
-      if (authors.filter((a) => a.name === args.author).length === 0) {
-        const newAuthor = { name: args.author, born: null };
-        authors = authors.concat(newAuthor);
+    addBook: async (_, args) => {
+      const authorExists = await Author.exists({ name: args.author });
+      let author = null;
+      if (!authorExists) {
+        console.log(!authorExists, args);
+        author = new Author({
+          name: args.author,
+        });
+        author.save();
+      } else {
+        author = Author.findOne({ name: args.author });
       }
-      const newBook = {
+
+      const newBook = new Book({
         title: args.title,
-        author: args.author,
+        author: author,
         published: args.published,
         genres: args.genres,
-      };
-      books = books.concat(newBook);
-      return { title: newBook.title, author: newBook.author };
+      });
+
+      try {
+      } catch (error) {
+        throw new GraphQLError(`Saving book failed: ${error.message}`, {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: { ...args },
+            error,
+          },
+        });
+      }
+
+      return newBook;
     },
     editAuthor: (_, args) => {
       let [editedAuthor] = authors.filter((a) => a.name === args.name);
