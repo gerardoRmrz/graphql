@@ -1,6 +1,10 @@
 const { GraphQLError } = require("graphql");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
 const Author = require("./models/author");
 const Book = require("./models/book");
+const User = require("./models/user");
 
 const resolvers = {
   Author: {
@@ -10,6 +14,9 @@ const resolvers = {
     },
   },
   Query: {
+    me: async (root, args) => {
+      return User.findOne({ username: args.username });
+    },
     bookCount: async () => {
       return Book.collection.countDocuments();
     },
@@ -41,9 +48,11 @@ const resolvers = {
   Mutation: {
     addBook: async (_, args) => {
       if (args.author.length < 4) {
+        // errorHandler is defined at the bottom of this file
         errorHandler(
           `Author's name too short, must be longer than 4 characters`,
           args,
+          null,
         );
       }
 
@@ -51,6 +60,7 @@ const resolvers = {
         errorHandler(
           `Book's title too short, must be longer than 5 characters`,
           args,
+          null,
         );
       }
 
@@ -63,7 +73,7 @@ const resolvers = {
         try {
           await author.save();
         } catch (error) {
-          errorHandler(`Saving author failed: ${error.message}`, args);
+          errorHandler(`Saving author failed: ${error.message}`, args, null);
         }
       } else {
         author = Author.findOne({ name: args.author });
@@ -79,7 +89,7 @@ const resolvers = {
       try {
         await Book.save();
       } catch (error) {
-        errorHandler(`Saving book failed: ${error.message}`, args);
+        errorHandler(`Saving book failed: ${error.message}`, args, null);
       }
 
       return newBook;
@@ -96,16 +106,38 @@ const resolvers = {
         { returnDocument: "after" },
       );
     },
+    createUser: async (root, args) => {
+      const user = new User({ username: args.username });
+
+      return user.save().catch((error) => {
+        errorHandler(`Creating the user failed: ${args.username}`, args, error);
+      });
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== "secret") {
+        errorHandler("Wrong credentials");
+      }
+
+      const userFotToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userFotToken, process.env.JWT_SECRET) };
+    },
   },
 };
 
 module.exports = resolvers;
 
-const errorHandler = (message, inputs) => {
+const errorHandler = (message, inputs, error) => {
   throw new GraphQLError(message, {
     extensions: {
       code: "BAD_USER_INPUT",
       invalidArgs: { ...inputs },
+      error,
     },
   });
 };
