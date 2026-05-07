@@ -14,8 +14,12 @@ const resolvers = {
     },
   },
   Query: {
-    me: async (root, args) => {
-      return User.findOne({ username: args.username });
+    me: async (root, args, context) => {
+      const currentUser = context.currentUser;
+      if (!currentUser) {
+        return null;
+      }
+      return currentUser;
     },
     bookCount: async () => {
       return Book.collection.countDocuments();
@@ -46,7 +50,13 @@ const resolvers = {
     },
   },
   Mutation: {
-    addBook: async (_, args) => {
+    addBook: async (_, args, context) => {
+      const currentUser = context.currentUser;
+
+      if (!currentUser) {
+        errorHandler("Not authenticated", "UNAUTHENTICATED");
+      }
+
       if (args.author.length < 4) {
         // errorHandler is defined at the bottom of this file
         errorHandler(
@@ -59,6 +69,7 @@ const resolvers = {
       if (args.title.length < 5) {
         errorHandler(
           `Book's title too short, must be longer than 5 characters`,
+          "BAD_USER_INPUT",
           args,
           null,
         );
@@ -73,7 +84,12 @@ const resolvers = {
         try {
           await author.save();
         } catch (error) {
-          errorHandler(`Saving author failed: ${error.message}`, args, null);
+          errorHandler(
+            `Saving author failed: ${error.message}`,
+            "BAD_USER_INPUT",
+            args,
+            null,
+          );
         }
       } else {
         author = Author.findOne({ name: args.author });
@@ -87,14 +103,25 @@ const resolvers = {
       });
 
       try {
-        await Book.save();
+        await newBook.save();
       } catch (error) {
-        errorHandler(`Saving book failed: ${error.message}`, args, null);
+        errorHandler(
+          `Saving book failed: ${error.message}`,
+          "BAD_USER_INPUT",
+          args,
+          null,
+        );
       }
 
       return newBook;
     },
-    editAuthor: async (_, args) => {
+    editAuthor: async (_, args, context) => {
+      const currentUser = context.currentUser;
+
+      if (!currentUser) {
+        errorHandler("Not authenticated", "UNAUTHENTICATED");
+      }
+
       let authorExists = Author.findOne({ name: args.name });
       if (!authorExists) {
         return null;
@@ -110,32 +137,37 @@ const resolvers = {
       const user = new User({ username: args.username });
 
       return user.save().catch((error) => {
-        errorHandler(`Creating the user failed: ${args.username}`, args, error);
+        errorHandler(
+          `Creating the user failed: ${args.username}`,
+          "BAD_USER_INPUT",
+          args,
+          error,
+        );
       });
     },
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username });
 
       if (!user || args.password !== "secret") {
-        errorHandler("Wrong credentials");
+        errorHandler("Wrong credentials", "BAD_USER_INPUT");
       }
 
-      const userFotToken = {
+      const userForToken = {
         username: user.username,
         id: user._id,
       };
 
-      return { value: jwt.sign(userFotToken, process.env.JWT_SECRET) };
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
     },
   },
 };
 
 module.exports = resolvers;
 
-const errorHandler = (message, inputs, error) => {
+const errorHandler = (message, code, inputs, error) => {
   throw new GraphQLError(message, {
     extensions: {
-      code: "BAD_USER_INPUT",
+      code: code,
       invalidArgs: { ...inputs },
       error,
     },
