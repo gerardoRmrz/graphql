@@ -16,6 +16,7 @@ const resolvers = {
   Query: {
     me: async (root, args, context) => {
       const currentUser = context.currentUser;
+
       if (!currentUser) {
         return null;
       }
@@ -92,7 +93,7 @@ const resolvers = {
           );
         }
       } else {
-        author = Author.findOne({ name: args.author });
+        author = await Author.findOne({ name: args.author });
       }
 
       const newBook = new Book({
@@ -134,7 +135,10 @@ const resolvers = {
       );
     },
     createUser: async (root, args) => {
-      const user = new User({ username: args.username });
+      const user = new User({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre,
+      });
 
       return user.save().catch((error) => {
         errorHandler(
@@ -158,6 +162,16 @@ const resolvers = {
       };
 
       return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+    },
+    _resetDatabase: async () => {
+      if (process.env.NODE_ENV !== "test") {
+        errorHandler("_resetDataBase is only available in test mode");
+      }
+
+      await Author.deleteMany({});
+      await Book.deleteMany({});
+      await User.deleteMany({});
+      return true;
     },
   },
 };

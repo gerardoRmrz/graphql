@@ -21,7 +21,7 @@ const typeDefs = /* GraphQL */ `
     genres: [String!]!
   }
   type Query {
-    me(username: String!): User
+    me: User
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book]
@@ -35,8 +35,9 @@ const typeDefs = /* GraphQL */ `
       genres: [String!]!
     ): Book!
     editAuthor(name: String!, setBornTo: Int!): Author
-    createUser(userName: String!, favoriteGenre: String!): User
+    createUser(username: String!, favoriteGenre: String!): User
     login(username: String!, password: String!): Token
+    _resetDatabase: Boolean
   }
 `;
 
