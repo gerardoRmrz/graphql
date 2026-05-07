@@ -26,7 +26,9 @@ const resolvers = {
       }
 
       if (args.genre) {
-        const result = books.filter((b) => b.genres.includes(args.genre));
+        const result = await Book.find({
+          genres: { $all: args.genre },
+        }).populate("author");
         return result;
       }
       return await Book.find({}).populate("author");
