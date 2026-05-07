@@ -36,7 +36,7 @@ const SetBornToForm = (props) => {
         <label>
           name
           <select onChange={({ target }) => setName(target.value)} value={name}>
-            <option value="" disabled selected hidden>
+            <option value="" disabled hidden>
               Select an option...
             </option>
             {authorsList.map((a, index) => (
