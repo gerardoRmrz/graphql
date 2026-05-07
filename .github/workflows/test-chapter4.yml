@@ -10,10 +10,11 @@ on:
     branches: [ "17_Checkoup" ]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./test-chapter4
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
