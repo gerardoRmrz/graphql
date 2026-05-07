@@ -69,14 +69,17 @@ const resolvers = {
 
       return newBook;
     },
-    editAuthor: (_, args) => {
-      let [editedAuthor] = authors.filter((a) => a.name === args.name);
-      if (!editedAuthor) {
+    editAuthor: async (_, args) => {
+      let authorExists = Author.findOne({ name: args.name });
+      if (!authorExists) {
         return null;
       }
-      editedAuthor = { ...editedAuthor, born: args.setBornTo };
-      authors = authors.map((a) => (a.name === args.name ? editedAuthor : a));
-      return editedAuthor;
+
+      return await Author.findOneAndUpdate(
+        { name: args.name },
+        { $set: { born: args.setBornTo } },
+        { returnDocument: "after" },
+      );
     },
   },
 };
