@@ -18,10 +18,11 @@ const resolvers = {
     },
     allBooks: async (root, args) => {
       if (args.author) {
-        const result = await Book.findOne({ name: args.name });
-        return result.map((b) => {
-          return { title: b.title };
-        });
+        const author = await Author.findOne({ name: args.author });
+        const result = await Book.find({ author: author._id }).populate(
+          "author",
+        );
+        return result;
       }
 
       if (args.genre) {
