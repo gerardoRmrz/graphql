@@ -1,9 +1,9 @@
+import SetBornToForm from "./SetBornToForm";
 const Authors = (props) => {
   if (!props.show) {
-    return null
+    return null;
   }
-  const authors = []
-
+  const authors = props.authors ? props.authors : [];
   return (
     <div>
       <h2>authors</h2>
@@ -23,8 +23,9 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      <SetBornToForm authors={authors.map((a) => a.name)} />
     </div>
-  )
-}
+  );
+};
 
-export default Authors
+export default Authors;
