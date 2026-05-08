@@ -69,7 +69,6 @@ const getUniqueGenres = (booksArr) => {
 };
 
 const filterByGenre = (books, genre) => {
-  console.log(genre);
   if (genre === "all genres") {
     return books;
   }

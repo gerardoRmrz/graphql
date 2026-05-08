@@ -5,6 +5,7 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
 import Notify from "./components/Notify";
+import Recommend from "./components/Recommend";
 
 import { ALL_AUTHORS, ALL_BOOKS } from "./graphql/queries";
 
@@ -27,9 +28,8 @@ const App = () => {
       <div>
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
-        {token ? (
-          <button onClick={() => setPage("add")}>add book</button>
-        ) : null}
+        <button onClick={() => setPage("recommend")}>recommend</button>
+        <button onClick={() => setPage("add")}>add book</button>
         {!token ? (
           <button onClick={() => setPage("login")}>login</button>
         ) : (
@@ -47,7 +47,12 @@ const App = () => {
 
       <Books show={page === "books"} books={allBooks.data?.allBooks} />
 
-      <NewBook show={page === "add"} />
+      <NewBook show={page === "add" && token} />
+
+      <Recommend
+        show={page === "recommend" && token}
+        books={allBooks.data?.allBooks}
+      />
 
       <LoginForm
         show={page === "login"}
