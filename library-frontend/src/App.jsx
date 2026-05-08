@@ -49,10 +49,7 @@ const App = () => {
 
       <NewBook show={page === "add" && token} />
 
-      <Recommend
-        show={page === "recommend" && token}
-        books={allBooks.data?.allBooks}
-      />
+      <Recommend show={page === "recommend" && token} />
 
       <LoginForm
         show={page === "login"}
