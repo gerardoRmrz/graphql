@@ -23,7 +23,9 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <SetBornToForm authors={authors.map((a) => a.name)} />
+      {props.isLogged ? (
+        <SetBornToForm authors={authors.map((a) => a.name)} />
+      ) : null}
     </div>
   );
 };
