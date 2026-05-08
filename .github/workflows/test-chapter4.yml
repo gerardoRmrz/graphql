@@ -4,8 +4,8 @@
 name: Test library-backend
 
 on:
-  # push:
-  #   branches: [ main, master ]
+  push:
+    branches: [ 17_Checkoup ]
   workflow_dispatch:
 
 jobs:
