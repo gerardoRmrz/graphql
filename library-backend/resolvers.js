@@ -53,7 +53,7 @@ const resolvers = {
   Mutation: {
     addBook: async (_, args, context) => {
       const currentUser = context.currentUser;
-
+      console.log(currentUser, args);
       if (!currentUser) {
         errorHandler("Not authenticated", "UNAUTHENTICATED");
       }
