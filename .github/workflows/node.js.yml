@@ -1,34 +1,33 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+name: Test library-backend
 
 on:
-  push:
-    branches: [ "17_Checkoup" ]
-  pull_request:
-    branches: [ "17_Checkoup" ]
+  # push:
+  #   branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./library-backend
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install library-backend dependencies
+        working-directory: library-backend
+        run: npm ci
+
+      - name: Install test dependencies
+        working-directory: tests-chapter4
+        run: npm ci
+
+      - name: Run tests
+        working-directory: tests-chapter4
+        run: npm test
