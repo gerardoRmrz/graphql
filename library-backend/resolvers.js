@@ -15,11 +15,12 @@ const resolvers = {
   },
   Query: {
     me: async (root, args, context) => {
-      const currentUser = context.currentUser;
-
+      const currentUser = await context.currentUser;
       if (!currentUser) {
         return null;
       }
+
+      //console.log("Resolvers: ", currentUser);
       return currentUser;
     },
     bookCount: async () => {
@@ -53,7 +54,6 @@ const resolvers = {
   Mutation: {
     addBook: async (_, args, context) => {
       const currentUser = context.currentUser;
-      console.log(currentUser, args);
       if (!currentUser) {
         errorHandler("Not authenticated", "UNAUTHENTICATED");
       }

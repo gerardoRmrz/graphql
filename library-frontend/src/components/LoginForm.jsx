@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
 import { LOGIN } from "../graphql/queries";
+import { CURRENT_USER } from "../graphql/queries";
 
-const LoginForm = ({ show, setError, setToken, setPage }) => {
+const LoginForm = ({
+  show,
+  setToken,
+  setPage,
+  getCurrentUser,
+  setErrorMessage,
+}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -12,9 +19,15 @@ const LoginForm = ({ show, setError, setToken, setPage }) => {
       setToken(token);
       localStorage.setItem("books-user-token", token);
       setPage("authors");
+      getCurrentUser();
     },
     onError: (error) => {
-      setError(error.message);
+      console.log(error);
+      setErrorMessage("Login failed: ");
+      const setTimeError = setTimeout(() => {
+        setErrorMessage("");
+      }, 10000);
+      setTimeError.clear();
     },
   });
   if (!show) {
@@ -25,25 +38,30 @@ const LoginForm = ({ show, setError, setToken, setPage }) => {
     login({ variables: { username, password } });
     setPassword("");
     setUsername("");
+    getCurrentUser();
   };
 
   return (
     <>
       <form onSubmit={submit}>
-        username{" "}
-        <input
-          type="text"
-          value={username}
-          autoComplete="username"
-          onChange={({ target }) => setUsername(target.value)}
-        ></input>
-        password{" "}
-        <input
-          type="password"
-          value={password}
-          autoComplete="current-password"
-          onChange={({ target }) => setPassword(target.value)}
-        ></input>
+        <label>
+          username{" "}
+          <input
+            type="text"
+            value={username}
+            autoComplete="username"
+            onChange={({ target }) => setUsername(target.value)}
+          ></input>
+        </label>
+        <label>
+          password{" "}
+          <input
+            type="password"
+            value={password}
+            autoComplete="current-password"
+            onChange={({ target }) => setPassword(target.value)}
+          ></input>
+        </label>
         <button type="submit">login</button>
       </form>
     </>

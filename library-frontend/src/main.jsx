@@ -8,6 +8,7 @@ import { SetContextLink } from "@apollo/client/link/context";
 
 const authLink = new SetContextLink(({ headers }) => {
   const token = localStorage.getItem("books-user-token");
+  //console.log("Token: ", token ? token : "No hay token");
   return {
     headers: {
       ...headers,
