@@ -7,7 +7,7 @@ module.exports = defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1,
-  reporter: "html",
+  reporter:  [['html', { open: 'never' }], ['json']],
   use: {
     baseURL: "http://localhost:5173",
     trace: "on-first-retry",
