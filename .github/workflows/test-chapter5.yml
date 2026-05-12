@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 24
 
-      - name: Install library-backend dependencies
+      - name: Install library-frontend dependencies
         working-directory: library-frontend
         run: npm ci
 
