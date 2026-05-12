@@ -21,7 +21,7 @@ const App = () => {
   const allBooks = useQuery(ALL_BOOKS);
   const [getCurrentUser, currentUserData] = useLazyQuery(CURRENT_USER);
 
-  if (currentUserData.data) {
+  if (currentUserData.data?.me) {
     localStorage.setItem(
       "books-currentUser",
       JSON.stringify(currentUserData.data),
@@ -64,9 +64,12 @@ const App = () => {
 
       <Books show={page === "books"} books={allBooks.data?.allBooks} />
 
-      <NewBook show={page === "add" && token} setError={setErrorMessage} />
+      <NewBook
+        show={page === "add" && token && currentUserData.data}
+        setError={setErrorMessage}
+      />
 
-      <Recommend show={page === "recommend" && token} />
+      <Recommend show={page === "recommend" && token && currentUserData.data} />
 
       <LoginForm
         show={page === "login"}

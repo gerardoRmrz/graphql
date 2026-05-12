@@ -5,7 +5,13 @@ const Recommend = ({ show }) => {
   const currentUser = JSON.parse(localStorage.getItem("books-currentUser"));
 
   const filteredBooksGQL = useQuery(BOOKS_BY_GENRE, {
-    variables: { genre: currentUser?.me.favoriteGenre },
+    variables: {
+      genre: currentUser
+        ? currentUser.me
+          ? currentUser.me.favoriteGenre
+          : "all genres"
+        : "all genres",
+    },
   });
 
   const filteredBooks = filteredBooksGQL.data?.allBooks;
@@ -13,10 +19,10 @@ const Recommend = ({ show }) => {
   /* const filteredBooks = books.filter((b) =>
     b.genres.includes(currentUser.data.me.favoriteGenre),
   ) */
-
   if (!show) {
     return null;
   }
+
   return (
     <>
       <h2>recommendations</h2>

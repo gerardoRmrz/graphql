@@ -23,7 +23,7 @@ const LoginForm = ({
     },
     onError: (error) => {
       console.log(error);
-      setErrorMessage("Login failed: ");
+      setErrorMessage("login failed: ");
       const setTimeError = setTimeout(() => {
         setErrorMessage("");
       }, 10000);

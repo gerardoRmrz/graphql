@@ -9,6 +9,7 @@ import {
 
 const NewBook = ({ show, setError }) => {
   const currentUser = JSON.parse(localStorage.getItem("books-currentUser"));
+  console.log(currentUser);
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [published, setPublished] = useState("");
@@ -19,7 +20,13 @@ const NewBook = ({ show, setError }) => {
     refetchQueries: [
       {
         query: BOOKS_BY_GENRE,
-        variables: { genre: currentUser?.me.favoriteGenre },
+        variables: {
+          genre: currentUser
+            ? currentUser.me
+              ? currentUser.me.favoriteGenre
+              : "all genres"
+            : "all genres",
+        },
       },
       {
         query: ALL_AUTHORS,
@@ -44,10 +51,6 @@ const NewBook = ({ show, setError }) => {
     },
   });
 
-  if (!show) {
-    return null;
-  }
-
   const submit = async (event) => {
     event.preventDefault();
 
@@ -68,6 +71,10 @@ const NewBook = ({ show, setError }) => {
     setGenres(genres.concat(genre));
     setGenre("");
   };
+
+  if (!show) {
+    return null;
+  }
 
   return (
     <div>
