@@ -21,7 +21,7 @@ jobs:
           node-version: 24
 
       - name: Install library-backend dependencies
-        working-directory: library-backend
+        working-directory: library-frontend
         run: npm ci
 
       - name: Install test dependencies
