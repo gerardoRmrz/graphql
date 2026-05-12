@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
-import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from "../graphql/queries";
+import {
+  ADD_BOOK,
+  ALL_AUTHORS,
+  ALL_BOOKS,
+  BOOKS_BY_GENRE,
+} from "../graphql/queries";
 
-const NewBook = (props) => {
+const NewBook = ({ show, setError }) => {
+  const currentUser = JSON.parse(localStorage.getItem("books-currentUser"));
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [published, setPublished] = useState("");
@@ -10,13 +16,35 @@ const NewBook = (props) => {
   const [genres, setGenres] = useState([]);
 
   const [addBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }],
+    refetchQueries: [
+      {
+        query: BOOKS_BY_GENRE,
+        variables: { genre: currentUser?.me.favoriteGenre },
+      },
+      {
+        query: ALL_AUTHORS,
+      },
+    ],
     onError: (error) => {
-      console.log(error);
+      setError(error.message);
+      console.log("addBook: ", error);
+      setTimeout(() => {
+        setError("");
+      }, 10000);
+    },
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_BOOKS }, (allBooks) => {
+        if (!allBooks) {
+          return allBooks;
+        }
+        return {
+          allBooks: allBooks.allBooks.concat(response?.data.addBook),
+        };
+      });
     },
   });
 
-  if (!props.show) {
+  if (!show) {
     return null;
   }
 
@@ -75,6 +103,7 @@ const NewBook = (props) => {
         </div>
         <div>
           <label>
+            genre
             <input
               value={genre}
               onChange={({ target }) => setGenre(target.value)}

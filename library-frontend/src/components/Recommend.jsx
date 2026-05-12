@@ -1,14 +1,14 @@
 import { useQuery } from "@apollo/client/react";
-import { CURRENT_USER, BOOKS_BY_GENRE } from "../graphql/queries";
+import { CURRENT_USER, BOOKS_BY_GENRE, ALL_BOOKS } from "../graphql/queries";
 
 const Recommend = ({ show }) => {
-  const currentUser = useQuery(CURRENT_USER);
+  const currentUser = JSON.parse(localStorage.getItem("books-currentUser"));
 
   const filteredBooksGQL = useQuery(BOOKS_BY_GENRE, {
-    variables: { genre: currentUser.data.me.favoriteGenre },
+    variables: { genre: currentUser?.me.favoriteGenre },
   });
 
-  const filteredBooks = filteredBooksGQL.data.allBooks;
+  const filteredBooks = filteredBooksGQL.data?.allBooks;
 
   /* const filteredBooks = books.filter((b) =>
     b.genres.includes(currentUser.data.me.favoriteGenre),
@@ -19,7 +19,11 @@ const Recommend = ({ show }) => {
   }
   return (
     <>
-      <h2>recommendations for you {currentUser.data.me.username} </h2>
+      <h2>recommendations</h2>
+      <h3>
+        books in your favorite genre{" "}
+        <strong>{currentUser?.me.favoriteGenre}</strong>
+      </h3>
       <table>
         <tbody>
           <tr>

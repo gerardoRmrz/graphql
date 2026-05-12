@@ -18,7 +18,7 @@ const Books = (props) => {
   return (
     <div style={{ display: "flex" }}>
       <div style={{ width: "60%" }}>
-        <h2>books</h2>
+        <h2>books {useGenre !== "all genres" ? "in genre" : null}</h2>
 
         <table>
           <tbody>

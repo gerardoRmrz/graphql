@@ -24,6 +24,7 @@ const SetBornToForm = (props) => {
 
   return (
     <>
+      <h2>Set birthyear</h2>
       <form
         onSubmit={(event) => submit(event)}
         style={{
@@ -35,10 +36,14 @@ const SetBornToForm = (props) => {
       >
         <label>
           name
-          <select onChange={({ target }) => setName(target.value)} value={name}>
-            <option value="" disabled hidden>
+          <select
+            onChange={({ target }) => setName(target.value)}
+            value={name}
+            name="name"
+          >
+            {/* <option value="" disabled hidden>
               Select an option...
-            </option>
+            </option> */}
             {authorsList.map((a, index) => (
               <option key={index}>{a}</option>
             ))}
@@ -52,7 +57,7 @@ const SetBornToForm = (props) => {
             value={born}
           ></input>
         </label>
-        <button type="submit">submit</button>
+        <button type="submit">update author</button>
       </form>
     </>
   );
