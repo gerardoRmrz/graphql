@@ -2,7 +2,7 @@ const { defineConfig, devices } = require("@playwright/test");
 
 module.exports = defineConfig({
   testDir: "./tests",
-  timeout: 120 * 1000,
+  timeout: 30 * 1000,
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -22,7 +22,7 @@ module.exports = defineConfig({
     {
       command: "node setup/start-test-backend.js",
       url: "http://localhost:4000",
-      timeout: 120 * 1000,
+      timeout: 60 * 1000,
       reuseExistingServer: true,
       signal: { signal: "SIGTERM", timeout: 500 },
     },
@@ -30,7 +30,7 @@ module.exports = defineConfig({
       command: "npm run dev",
       cwd: "../library-frontend",
       url: "http://localhost:5173",
-      timeout: 120 * 1000,
+      timeout: 60 * 1000,
       reuseExistingServer: true,
     },
   ],
