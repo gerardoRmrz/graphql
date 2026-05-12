@@ -1,14 +1,19 @@
 name: E2E tests (library)
 
 on:
-  # push:
-  #   branches: [ main, master ]
-  workflow_dispatch:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
-  e2e-tests:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - uses: actions/checkout@v6
