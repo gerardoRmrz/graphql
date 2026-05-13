@@ -62,22 +62,24 @@ const App = () => {
         isLogged={token ? true : false}
       />
 
-      <Books show={page === "books"} books={allBooks.data?.allBooks} />
+      {page === "books" ? <Books books={allBooks.data?.allBooks} /> : null}
 
-      <NewBook
-        show={page === "add" && token && currentUserData.data}
-        setError={setErrorMessage}
-      />
+      {page === "add" && token && currentUserData.data ? (
+        <NewBook setError={setErrorMessage} />
+      ) : null}
 
-      <Recommend show={page === "recommend" && token && currentUserData.data} />
+      {page === "recommend" && token && currentUserData.data ? (
+        <Recommend />
+      ) : null}
 
-      <LoginForm
-        show={page === "login"}
-        setToken={setToken}
-        setPage={setPage}
-        getCurrentUser={getCurrentUser}
-        setErrorMessage={setErrorMessage}
-      />
+      {page === "login" ? (
+        <LoginForm
+          setToken={setToken}
+          setPage={setPage}
+          getCurrentUser={getCurrentUser}
+          setErrorMessage={setErrorMessage}
+        />
+      ) : null}
     </div>
   );
 };

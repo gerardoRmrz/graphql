@@ -7,7 +7,7 @@ import {
   BOOKS_BY_GENRE,
 } from "../graphql/queries";
 
-const NewBook = ({ show, setError }) => {
+const NewBook = ({ setError }) => {
   const currentUser = JSON.parse(localStorage.getItem("books-currentUser"));
   console.log(currentUser);
   const [title, setTitle] = useState("");
@@ -71,11 +71,6 @@ const NewBook = ({ show, setError }) => {
     setGenres(genres.concat(genre));
     setGenre("");
   };
-
-  if (!show) {
-    return null;
-  }
-
   return (
     <div>
       <form onSubmit={submit}>

@@ -3,13 +3,7 @@ import { useMutation } from "@apollo/client/react";
 import { LOGIN } from "../graphql/queries";
 import { CURRENT_USER } from "../graphql/queries";
 
-const LoginForm = ({
-  show,
-  setToken,
-  setPage,
-  getCurrentUser,
-  setErrorMessage,
-}) => {
+const LoginForm = ({ setToken, setPage, getCurrentUser, setErrorMessage }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -30,9 +24,7 @@ const LoginForm = ({
       setTimeError.clear();
     },
   });
-  if (!show) {
-    return null;
-  }
+
   const submit = (e) => {
     e.preventDefault();
     login({ variables: { username, password } });

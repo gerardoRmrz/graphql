@@ -2,11 +2,6 @@ import { useState } from "react";
 
 const Books = (props) => {
   const [useGenre, setUseGenre] = useState("all genres");
-
-  if (!props.show) {
-    return null;
-  }
-
   const books = props.books ? props.books : [];
   const uniqueGenres = getUniqueGenres(books);
   const filteredBooks = filterByGenre(books, useGenre);
