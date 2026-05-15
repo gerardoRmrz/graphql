@@ -1,6 +1,5 @@
 import { useState, useContext } from "react";
-import { ErrorMessageProvider } from "./context/ErrorMessageContext";
-import { UserContext, UserProvider } from "./context/UserContext";
+import { UserContext } from "./context/UserContext";
 
 import Heading from "./components/Heading";
 import Authors from "./components/Authors";
@@ -16,7 +15,7 @@ const App = () => {
   const [page, setPage] = useState("authors");
 
   return (
-    <ErrorMessageProvider>
+    <>
       <Heading setPage={setPage} />
 
       <Notify />
@@ -30,7 +29,7 @@ const App = () => {
       {page === "recommend" && token ? <Recommend /> : null}
 
       {page === "login" ? <LoginForm setPage={setPage} /> : null}
-    </ErrorMessageProvider>
+    </>
   );
 };
 

@@ -21,7 +21,7 @@ const NewBook = () => {
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
 
-  const [addBook] = useMutation(ADD_BOOK, {
+  const [addBook, { _, loading, __ }] = useMutation(ADD_BOOK, {
     refetchQueries: [
       {
         query: BOOKS_BY_GENRE,
@@ -70,6 +70,7 @@ const NewBook = () => {
   };
   return (
     <div>
+      {loading ? <p>Loading...</p> : null}
       <form onSubmit={submit}>
         <div>
           <label>
