@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client/react";
+
+import { ErrorMessageContext } from "../context/ErrorMessageContext";
 import {
   ADD_BOOK,
   ALL_AUTHORS,
@@ -7,29 +9,34 @@ import {
   BOOKS_BY_GENRE,
 } from "../graphql/queries";
 
-const NewBook = ({ show, setError }) => {
+const NewBook = () => {
+  const { setErrorMessage } = useContext(ErrorMessageContext);
   const currentUser = JSON.parse(localStorage.getItem("books-currentUser"));
+
+  const currentUserGenre = currentUser.favoriteGenre;
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [published, setPublished] = useState("");
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
 
-  const [addBook] = useMutation(ADD_BOOK, {
+  const [addBook, { _, loading, __ }] = useMutation(ADD_BOOK, {
     refetchQueries: [
       {
         query: BOOKS_BY_GENRE,
-        variables: { genre: currentUser?.me.favoriteGenre },
+        variables: {
+          genre: currentUserGenre,
+        },
       },
       {
         query: ALL_AUTHORS,
       },
     ],
     onError: (error) => {
-      setError(error.message);
-      console.log("addBook: ", error);
+      setErrorMessage(error.message);
       setTimeout(() => {
-        setError("");
+        setErrorMessage("");
       }, 10000);
     },
     update: (cache, response) => {
@@ -44,15 +51,8 @@ const NewBook = ({ show, setError }) => {
     },
   });
 
-  if (!show) {
-    return null;
-  }
-
   const submit = async (event) => {
     event.preventDefault();
-
-    console.log("add book...");
-
     addBook({
       variables: { title, author, published, genres },
     });
@@ -68,9 +68,9 @@ const NewBook = ({ show, setError }) => {
     setGenres(genres.concat(genre));
     setGenre("");
   };
-
   return (
     <div>
+      {loading ? <p>Loading...</p> : null}
       <form onSubmit={submit}>
         <div>
           <label>

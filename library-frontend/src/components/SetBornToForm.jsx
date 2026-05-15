@@ -1,17 +1,27 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client/react";
+
+import { ErrorMessageContext } from "../context/ErrorMessageContext";
 import { ADD_BIRTH_YEAR, ALL_AUTHORS } from "../graphql/queries";
 
-const SetBornToForm = (props) => {
+const SetBornToForm = ({ authors }) => {
+  const { setErrorMessage } = useContext(ErrorMessageContext);
+
   const [name, setName] = useState("");
   const [born, setBorn] = useState("");
 
-  const [addBornYear] = useMutation(ADD_BIRTH_YEAR, {
+  const [addBornYear, { _, loading, __ }] = useMutation(ADD_BIRTH_YEAR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
     onError: (error) => {
       console.log(error);
+      setErrorMessage(error.message);
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 10000);
     },
   });
+
+  if (loading) return <p>Loading...</p>;
 
   const submit = (event) => {
     event.preventDefault();
@@ -20,7 +30,7 @@ const SetBornToForm = (props) => {
     setBorn("");
   };
 
-  const authorsList = props?.authors;
+  const authorsList = authors ? authors : [];
 
   return (
     <>
@@ -41,9 +51,6 @@ const SetBornToForm = (props) => {
             value={name}
             name="name"
           >
-            {/* <option value="" disabled hidden>
-              Select an option...
-            </option> */}
             {authorsList.map((a, index) => (
               <option key={index}>{a}</option>
             ))}
@@ -52,12 +59,15 @@ const SetBornToForm = (props) => {
         <label>
           born
           <input
+            style={{ width: "150px" }}
             type="number"
             onChange={({ target }) => setBorn(Number(target.value))}
             value={born}
           ></input>
         </label>
-        <button type="submit">update author</button>
+        <button type="submit" style={{ width: "150px" }}>
+          update author
+        </button>
       </form>
     </>
   );

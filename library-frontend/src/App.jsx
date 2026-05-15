@@ -1,7 +1,7 @@
-import { useApolloClient } from "@apollo/client/react";
-import { useState } from "react";
-import { useQuery, useLazyQuery } from "@apollo/client/react";
+import { useState, useContext } from "react";
+import { UserContext } from "./context/UserContext";
 
+import Heading from "./components/Heading";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
@@ -9,73 +9,27 @@ import LoginForm from "./components/LoginForm";
 import Notify from "./components/Notify";
 import Recommend from "./components/Recommend";
 
-import { ALL_AUTHORS, ALL_BOOKS, CURRENT_USER } from "./graphql/queries";
-
 const App = () => {
-  const client = useApolloClient();
-  const [token, setToken] = useState(localStorage.getItem("books-user-token"));
-  const [errorMessage, setErrorMessage] = useState(null);
+  const { token } = useContext(UserContext);
+
   const [page, setPage] = useState("authors");
 
-  const allAuthors = useQuery(ALL_AUTHORS);
-  const allBooks = useQuery(ALL_BOOKS);
-  const [getCurrentUser, currentUserData] = useLazyQuery(CURRENT_USER);
-
-  if (currentUserData.data) {
-    localStorage.setItem(
-      "books-currentUser",
-      JSON.stringify(currentUserData.data),
-    );
-  }
-
-  const logout = () => {
-    setToken(null);
-    setPage("authors");
-    localStorage.removeItem("books-user-token");
-    localStorage.removeItem("books-currentUser");
-    client.clearStore();
-  };
-
   return (
-    <div>
-      <div>
-        <button onClick={() => setPage("authors")}>authors</button>
-        <button onClick={() => setPage("books")}>books</button>
-        {token ? (
-          <button onClick={() => setPage("recommend")}>recommend</button>
-        ) : null}
-        {token ? (
-          <button onClick={() => setPage("add")}>add book</button>
-        ) : null}
-        {token ? (
-          <button onClick={logout}>logout</button>
-        ) : (
-          <button onClick={() => setPage("login")}>login</button>
-        )}
-      </div>
+    <>
+      <Heading setPage={setPage} />
 
-      <Notify message={errorMessage} />
+      <Notify />
 
-      <Authors
-        show={page === "authors"}
-        authors={allAuthors.data?.allAuthors}
-        isLogged={token ? true : false}
-      />
+      {page === "authors" ? <Authors /> : null}
 
-      <Books show={page === "books"} books={allBooks.data?.allBooks} />
+      {page === "books" ? <Books /> : null}
 
-      <NewBook show={page === "add" && token} setError={setErrorMessage} />
+      {page === "add" && token ? <NewBook /> : null}
 
-      <Recommend show={page === "recommend" && token} />
+      {page === "recommend" && token ? <Recommend /> : null}
 
-      <LoginForm
-        show={page === "login"}
-        setToken={setToken}
-        setPage={setPage}
-        getCurrentUser={getCurrentUser}
-        setErrorMessage={setErrorMessage}
-      />
-    </div>
+      {page === "login" ? <LoginForm setPage={setPage} /> : null}
+    </>
   );
 };
 

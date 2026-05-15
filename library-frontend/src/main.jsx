@@ -1,5 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { UserProvider } from "./context/UserContext";
+import { ErrorMessageProvider } from "./context/ErrorMessageContext";
 import App from "./App.jsx";
 
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
@@ -8,7 +10,7 @@ import { SetContextLink } from "@apollo/client/link/context";
 
 const authLink = new SetContextLink(({ headers }) => {
   const token = localStorage.getItem("books-user-token");
-  //console.log("Token: ", token ? token : "No hay token");
+
   return {
     headers: {
       ...headers,
@@ -29,7 +31,11 @@ const client = new ApolloClient({
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <ErrorMessageProvider>
+        <UserProvider>
+          <App />
+        </UserProvider>
+      </ErrorMessageProvider>
     </ApolloProvider>
   </StrictMode>,
 );

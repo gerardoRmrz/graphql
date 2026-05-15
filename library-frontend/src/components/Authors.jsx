@@ -1,9 +1,23 @@
+import { useQuery } from "@apollo/client/react";
+import { useContext } from "react";
+
+import { ErrorMessageContext } from "../context/ErrorMessageContext";
+import { UserContext } from "../context/UserContext";
+import { ALL_AUTHORS } from "../graphql/queries";
 import SetBornToForm from "./SetBornToForm";
-const Authors = (props) => {
-  if (!props.show) {
-    return null;
+
+const Authors = () => {
+  const { setErrorMessage } = useContext(ErrorMessageContext);
+  const { token } = useContext(UserContext);
+  const { loading, error, data } = useQuery(ALL_AUTHORS);
+  if (loading) return <p>Loading...</p>;
+  if (error) {
+    setErrorMessage(error.message);
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 10000);
   }
-  const authors = props.authors ? props.authors : [];
+
   return (
     <div style={{ display: "flex" }}>
       <div>
@@ -15,7 +29,7 @@ const Authors = (props) => {
               <th>born</th>
               <th>books</th>
             </tr>
-            {authors.map((a) => (
+            {data.allAuthors.map((a) => (
               <tr key={a.id}>
                 <td>{a.name}</td>
                 <td>{a.born}</td>
@@ -32,8 +46,8 @@ const Authors = (props) => {
           width: "25%",
         }}
       >
-        {props.isLogged ? (
-          <SetBornToForm authors={authors.map((a) => a.name)} />
+        {token ? (
+          <SetBornToForm authors={data.allAuthors.map((a) => a.name)} />
         ) : null}
       </div>
     </div>

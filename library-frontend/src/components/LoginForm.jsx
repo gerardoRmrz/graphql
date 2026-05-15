@@ -1,44 +1,46 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client/react";
+import { ErrorMessageContext } from "../context/ErrorMessageContext";
+import { UserContext } from "../context/UserContext";
 import { LOGIN } from "../graphql/queries";
-import { CURRENT_USER } from "../graphql/queries";
 
-const LoginForm = ({
-  show,
-  setToken,
-  setPage,
-  getCurrentUser,
-  setErrorMessage,
-}) => {
+const LoginForm = ({ setPage }) => {
+  const { setErrorMessage } = useContext(ErrorMessageContext);
+  const { setCurrentUser, setToken } = useContext(UserContext);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const [login] = useMutation(LOGIN, {
+  const [login, { _, loading, __ }] = useMutation(LOGIN, {
     onCompleted: (data) => {
       const token = data.login.value;
+      const currentUser = JSON.stringify(data.login.userInfo);
+
       setToken(token);
-      localStorage.setItem("books-user-token", token);
+      setCurrentUser(JSON.parse(currentUser));
       setPage("authors");
-      getCurrentUser();
+
+      localStorage.setItem("books-user-token", token);
+      localStorage.setItem("books-currentUser", currentUser);
     },
     onError: (error) => {
+      setPage("authors");
       console.log(error);
-      setErrorMessage("Login failed: ");
+      setErrorMessage(`login failed: ${error.message}`);
       const setTimeError = setTimeout(() => {
         setErrorMessage("");
       }, 10000);
       setTimeError.clear();
     },
   });
-  if (!show) {
-    return null;
-  }
+
+  if (loading) return <p>Login...</p>;
+
   const submit = (e) => {
     e.preventDefault();
     login({ variables: { username, password } });
     setPassword("");
     setUsername("");
-    getCurrentUser();
   };
 
   return (

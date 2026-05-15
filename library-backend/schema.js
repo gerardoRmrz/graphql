@@ -6,6 +6,7 @@ const typeDefs = /* GraphQL */ `
   }
   type Token {
     value: String
+    userInfo: User
   }
   type Author {
     id: ID!
@@ -21,7 +22,7 @@ const typeDefs = /* GraphQL */ `
     genres: [String!]!
   }
   type Query {
-    me: User
+    me: User!
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book]
