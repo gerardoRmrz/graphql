@@ -1,8 +1,25 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { useQuery } from "@apollo/client/react";
 
-const Books = (props) => {
+import { SetErrorMessageCtx } from "../App";
+import { ALL_BOOKS } from "../graphql/queries";
+
+const Books = () => {
+  const setErrorMessage = useContext(SetErrorMessageCtx);
   const [useGenre, setUseGenre] = useState("all genres");
-  const books = props.books ? props.books : [];
+
+  const { loading, error, data } = useQuery(ALL_BOOKS);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) {
+    setErrorMessage(error.message);
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 10000);
+  }
+
+  const books = data.allBooks;
+
   const uniqueGenres = getUniqueGenres(books);
   const filteredBooks = filterByGenre(books, useGenre);
 

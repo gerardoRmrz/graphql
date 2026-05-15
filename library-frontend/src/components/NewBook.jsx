@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client/react";
+
+import { SetErrorMessageCtx } from "../App";
 import {
   ADD_BOOK,
   ALL_AUTHORS,
@@ -7,9 +9,12 @@ import {
   BOOKS_BY_GENRE,
 } from "../graphql/queries";
 
-const NewBook = ({ setError }) => {
+const NewBook = () => {
+  const setErrorMessage = useContext(SetErrorMessageCtx);
   const currentUser = JSON.parse(localStorage.getItem("books-currentUser"));
-  console.log(currentUser);
+
+  const currentUserGenre = currentUser.favoriteGenre;
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [published, setPublished] = useState("");
@@ -21,11 +26,7 @@ const NewBook = ({ setError }) => {
       {
         query: BOOKS_BY_GENRE,
         variables: {
-          genre: currentUser
-            ? currentUser.me
-              ? currentUser.me.favoriteGenre
-              : "all genres"
-            : "all genres",
+          genre: currentUserGenre,
         },
       },
       {
@@ -33,10 +34,9 @@ const NewBook = ({ setError }) => {
       },
     ],
     onError: (error) => {
-      setError(error.message);
-      console.log("addBook: ", error);
+      setErrorMessage(error.message);
       setTimeout(() => {
-        setError("");
+        setErrorMessage("");
       }, 10000);
     },
     update: (cache, response) => {
@@ -53,9 +53,6 @@ const NewBook = ({ setError }) => {
 
   const submit = async (event) => {
     event.preventDefault();
-
-    console.log("add book...");
-
     addBook({
       variables: { title, author, published, genres },
     });

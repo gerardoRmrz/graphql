@@ -161,7 +161,10 @@ const resolvers = {
         id: user._id,
       };
 
-      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+      return {
+        value: jwt.sign(userForToken, process.env.JWT_SECRET),
+        userInfo: user,
+      };
     },
     _resetDatabase: async () => {
       if (process.env.NODE_ENV !== "test") {

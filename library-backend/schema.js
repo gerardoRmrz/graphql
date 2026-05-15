@@ -6,6 +6,7 @@ const typeDefs = /* GraphQL */ `
   }
   type Token {
     value: String
+    userInfo: User
   }
   type Author {
     id: ID!
