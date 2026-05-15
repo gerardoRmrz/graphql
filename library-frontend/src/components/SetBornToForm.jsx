@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client/react";
 
-import { ErrorMessageContext } from "../../context/ErrorMessageContext";
+import { ErrorMessageContext } from "../context/ErrorMessageContext";
 import { ADD_BIRTH_YEAR, ALL_AUTHORS } from "../graphql/queries";
 
 const SetBornToForm = ({ authors }) => {

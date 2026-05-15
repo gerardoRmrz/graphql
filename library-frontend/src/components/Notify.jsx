@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ErrorMessageContext } from "../../context/ErrorMessageContext";
+import { ErrorMessageContext } from "../context/ErrorMessageContext";
 
 const Notify = () => {
   const { errorMessage } = useContext(ErrorMessageContext);

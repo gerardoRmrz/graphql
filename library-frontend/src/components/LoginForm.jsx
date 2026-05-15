@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client/react";
-import { ErrorMessageContext } from "../../context/ErrorMessageContext";
-import { UserContext } from "../../context/UserContext";
+import { ErrorMessageContext } from "../context/ErrorMessageContext";
+import { UserContext } from "../context/UserContext";
 import { LOGIN } from "../graphql/queries";
 
 const LoginForm = ({ setPage }) => {

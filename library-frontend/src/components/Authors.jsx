@@ -1,12 +1,14 @@
 import { useQuery } from "@apollo/client/react";
 import { useContext } from "react";
 
-import { ErrorMessageContext } from "../../context/ErrorMessageContext";
+import { ErrorMessageContext } from "../context/ErrorMessageContext";
+import { UserContext } from "../context/UserContext";
 import { ALL_AUTHORS } from "../graphql/queries";
 import SetBornToForm from "./SetBornToForm";
 
-const Authors = ({ isLogged }) => {
+const Authors = () => {
   const { setErrorMessage } = useContext(ErrorMessageContext);
+  const { token } = useContext(UserContext);
   const { loading, error, data } = useQuery(ALL_AUTHORS);
   if (loading) return <p>Loading...</p>;
   if (error) {
@@ -44,7 +46,7 @@ const Authors = ({ isLogged }) => {
           width: "25%",
         }}
       >
-        {isLogged ? (
+        {token ? (
           <SetBornToForm authors={data.allAuthors.map((a) => a.name)} />
         ) : null}
       </div>

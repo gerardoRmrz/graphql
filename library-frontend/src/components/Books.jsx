@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useQuery } from "@apollo/client/react";
 
-import { ErrorMessageContext } from "../../context/ErrorMessageContext";
+import { ErrorMessageContext } from "../context/ErrorMessageContext";
 import { ALL_BOOKS } from "../graphql/queries";
 
 const Books = () => {
