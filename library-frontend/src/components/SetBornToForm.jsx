@@ -34,7 +34,7 @@ const SetBornToForm = ({ authors }) => {
 
   return (
     <>
-      <h2>Set birth year</h2>
+      <h2>Set birthyear</h2>
       <form
         onSubmit={(event) => submit(event)}
         style={{
