@@ -1,10 +1,13 @@
 import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client/react";
-import { SetErrorMessageCtx } from "../App";
+import { ErrorMessageContext } from "../../context/ErrorMessageContext";
+import { UserContext } from "../../context/UserContext";
 import { LOGIN } from "../graphql/queries";
 
-const LoginForm = ({ setToken, setCurrentUser, setPage }) => {
-  const setErrorMessage = useContext(SetErrorMessageCtx);
+const LoginForm = ({ setPage }) => {
+  const { setErrorMessage } = useContext(ErrorMessageContext);
+  const { setCurrentUser, setToken } = useContext(UserContext);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,7 +26,7 @@ const LoginForm = ({ setToken, setCurrentUser, setPage }) => {
     onError: (error) => {
       setPage("authors");
       console.log(error);
-      setErrorMessage("login failed: ");
+      setErrorMessage(`login failed: ${error.message}`);
       const setTimeError = setTimeout(() => {
         setErrorMessage("");
       }, 10000);

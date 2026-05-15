@@ -1,11 +1,11 @@
 import { useState, useContext } from "react";
 import { useQuery } from "@apollo/client/react";
 
-import { SetErrorMessageCtx } from "../App";
+import { ErrorMessageContext } from "../../context/ErrorMessageContext";
 import { ALL_BOOKS } from "../graphql/queries";
 
 const Books = () => {
-  const setErrorMessage = useContext(SetErrorMessageCtx);
+  const setErrorMessage = useContext(ErrorMessageContext);
   const [useGenre, setUseGenre] = useState("all genres");
 
   const { loading, error, data } = useQuery(ALL_BOOKS);

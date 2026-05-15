@@ -1,7 +1,12 @@
 import { useApolloClient } from "@apollo/client/react";
+import { UserContext } from "../context/UserContext";
+import { useContext } from "react";
 
-const Heading = ({ setToken, setPage, setCurrentUser, token, currentUser }) => {
+const Heading = ({ setPage }) => {
   const client = useApolloClient();
+  const { currentUser, setCurrentUser, token, setToken } =
+    useContext(UserContext);
+
   const logout = () => {
     setToken(null);
     setPage("authors");

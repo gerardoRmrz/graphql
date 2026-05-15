@@ -1,12 +1,12 @@
 import { useQuery } from "@apollo/client/react";
 import { useContext } from "react";
 
-import { SetErrorMessageCtx } from "../App";
+import { ErrorMessageContext } from "../../context/ErrorMessageContext";
 import { ALL_AUTHORS } from "../graphql/queries";
 import SetBornToForm from "./SetBornToForm";
 
 const Authors = ({ isLogged }) => {
-  const setErrorMessage = useContext(SetErrorMessageCtx);
+  const { setErrorMessage } = useContext(ErrorMessageContext);
   const { loading, error, data } = useQuery(ALL_AUTHORS);
   if (loading) return <p>Loading...</p>;
   if (error) {

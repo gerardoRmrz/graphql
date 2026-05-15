@@ -1,4 +1,6 @@
-import { useState, createContext } from "react";
+import { useState, useContext } from "react";
+import { ErrorMessageProvider } from "../context/ErrorMessageContext";
+import { UserContext, UserProvider } from "../context/UserContext";
 
 import Heading from "./Heading";
 import Authors from "./components/Authors";
@@ -9,50 +11,29 @@ import Notify from "./components/Notify";
 import Recommend from "./components/Recommend";
 
 const App = () => {
-  const [token, setToken] = useState(localStorage.getItem("books-user-token"));
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem("books-currentUser")),
-  );
+  const { currentUser, token } = useContext(UserContext);
 
-  const [errorMessage, setErrorMessage] = useState(null);
   const [page, setPage] = useState("authors");
 
   return (
-    <SetErrorMessageCtx.Provider value={setErrorMessage}>
-      <div>
-        <Heading
-          setToken={setToken}
-          setPage={setPage}
-          setCurrentUser={setCurrentUser}
-          token={token}
-          currentUser={currentUser}
-        />
+    <ErrorMessageProvider>
+      <Heading setPage={setPage} />
 
-        <Notify message={errorMessage} />
+      <Notify />
 
-        {page === "authors" ? (
-          <Authors isLogged={token ? true : false} />
-        ) : null}
+      {page === "authors" ? <Authors isLogged={token ? true : false} /> : null}
 
-        {page === "books" ? <Books /> : null}
+      {page === "books" ? <Books /> : null}
 
-        {page === "add" && token ? <NewBook /> : null}
+      {page === "add" && token ? <NewBook /> : null}
 
-        {page === "recommend" && token ? (
-          <Recommend currentUserGenre={currentUser.favoriteGenre} />
-        ) : null}
+      {page === "recommend" && token ? (
+        <Recommend currentUserGenre={currentUser.favoriteGenre} />
+      ) : null}
 
-        {page === "login" ? (
-          <LoginForm
-            setToken={setToken}
-            setCurrentUser={setCurrentUser}
-            setPage={setPage}
-          />
-        ) : null}
-      </div>
-    </SetErrorMessageCtx.Provider>
+      {page === "login" ? <LoginForm setPage={setPage} /> : null}
+    </ErrorMessageProvider>
   );
 };
 
-export const SetErrorMessageCtx = createContext(null);
 export default App;

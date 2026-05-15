@@ -1,11 +1,13 @@
 import { useContext } from "react";
 import { useQuery } from "@apollo/client/react";
 
-import { SetErrorMessageCtx } from "../App";
+import { ErrorMessageContext } from "../../context/ErrorMessageContext";
+import { UserContext } from "../../context/UserContext";
 import { BOOKS_BY_GENRE } from "../graphql/queries";
 
 const Recommend = ({ currentUserGenre }) => {
-  const setErrorMessage = useContext(SetErrorMessageCtx);
+  const setErrorMessage = useContext(ErrorMessageContext);
+
   /* const filteredBooks = books.filter((b) =>
     b.genres.includes(currentUser.data.me.favoriteGenre),
   ) */

@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client/react";
 
-import { SetErrorMessageCtx } from "../App";
+import { ErrorMessageContext } from "../../context/ErrorMessageContext";
 import {
   ADD_BOOK,
   ALL_AUTHORS,
@@ -10,7 +10,7 @@ import {
 } from "../graphql/queries";
 
 const NewBook = () => {
-  const setErrorMessage = useContext(SetErrorMessageCtx);
+  const { setErrorMessage } = useContext(ErrorMessageContext);
   const currentUser = JSON.parse(localStorage.getItem("books-currentUser"));
 
   const currentUserGenre = currentUser.favoriteGenre;
